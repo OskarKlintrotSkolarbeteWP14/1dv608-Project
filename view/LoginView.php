@@ -42,6 +42,8 @@ class LoginView implements iLayoutView {
 	 */
 	private $model;
 
+	private $optionalContent;
+
 	/**
 	 * @param \model\LoginModel $model
 	 */
@@ -119,12 +121,16 @@ class LoginView implements iLayoutView {
 	 * @sideeffect Sets cookies!
 	 * @return String HTML
 	 */
-	public function response() {
+	public function response($optionalContent = "") {
 		if ($this->model->isLoggedIn($this->getUserClient())) {
 			return $this->doLogoutForm();
 		} else {
 			return $this->doLoginForm();
 		}
+	}
+
+	public function setOptionalContent($optionalContent) {
+		$this->optionalContent = $optionalContent;
 	}
 
 

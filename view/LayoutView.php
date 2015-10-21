@@ -6,16 +6,16 @@
 namespace view;
 
 class LayoutView {
-  public function render($registerNewUser, $isLoggedIn, iLayoutView $v, DateTimeView $dtv) {
+  public function render($registerNewUser, $isLoggedIn, iLayoutView $v, DateTimeView $dtv, iLayoutView $content = null) {
 ?>
 <!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8">
-    <title>Login Example</title>
+    <title>Todo-app Example</title>
   </head>
   <body>
-    <h1>Assignment 4</h1>
+    <h1>Project in PHP</h1>
     <?php
       if($registerNewUser){
         echo '<a href="./">Back to login</a>';
@@ -31,6 +31,9 @@ class LayoutView {
     <div class="container" >
       <?php 
         echo $v->response();
+
+        if($content)
+          echo "<br />" . $content->response();
 
         $dtv->show();
       ?>

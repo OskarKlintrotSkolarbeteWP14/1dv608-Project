@@ -24,6 +24,10 @@ require_once("model/RegistrationDAL.php");
 //Database
 require_once("model/DatabaseConnection.php");
 
+//Todo
+require_once("controller/TodoController.php");
+require_once("view/TodoView.php");
+
 use controller;
 use model;
 use view;
@@ -40,6 +44,9 @@ class MasterController
     private $m_DatabaseConnection;
     private $loggedIn = false;
     private $registerNewUser = false;
+    private $c_Todo;
+
+    private $optionalView;
 
     public function run() {
         //Dependency injection
@@ -54,6 +61,9 @@ class MasterController
         $this->v_Registration = new view\RegistrationView($this->m_Registration, $this->m_RegistrationDAL);
         $this->c_Registration = new controller\RegistrationController($this->v_Registration, $this->m_Registration, $this->m_RegistrationDAL);
 
+        $this->v_Todo = new view\TodoView();
+        $this->c_Todo = new controller\TodoController($this->v_Todo);
+
         //Controller must be run first since state is changed
         if($this->c_Registration->userWantToRegister()) {
             $viewToRender = $this->v_Registration;
@@ -66,11 +76,15 @@ class MasterController
             $viewToRender = $this->v_Login;
             $this->c_Login->doControl();
             $this->loggedIn = $this->m_Login->isLoggedIn($this->v_Login->getUserClient());
+            if($this->loggedIn){
+                $this->c_Todo->doTodo();
+                $this->optionalView = $this->v_Todo;
+            }
         }
 
         //Generate output
         $v_DateTime = new view\DateTimeView();
         $v_Layout = new view\LayoutView();
-        $v_Layout->render($this->registerNewUser, $this->loggedIn, $viewToRender, $v_DateTime);
+        $v_Layout->render($this->registerNewUser, $this->loggedIn, $viewToRender, $v_DateTime, $this->optionalView);
     }
 }
