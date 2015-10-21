@@ -8,19 +8,9 @@
 
 namespace model;
 
+require_once("BaseDAL.php");
 
-class LoginDAL
+class LoginDAL extends BaseDAL
 {
-    private $database;
 
-    public function __construct($database){
-        $this->database = $database;
-    }
-
-    public function getUserCredentials($username) {
-        $this->database->prepare('SELECT username, password FROM users WHERE username = :username');
-        $this->database->bindValue(':username', $username);
-        $resultFromDatabase = $this->database->fetch();
-        return new User($resultFromDatabase['username'], $resultFromDatabase['password']);
-    }
 }

@@ -121,7 +121,7 @@ class LoginView implements iLayoutView {
 	 * @sideeffect Sets cookies!
 	 * @return String HTML
 	 */
-	public function response($optionalContent = "") {
+	public function response() {
 		if ($this->model->isLoggedIn($this->getUserClient())) {
 			return $this->doLogoutForm();
 		} else {

@@ -12,7 +12,13 @@ require_once("iLayoutView.php");
 
 class TodoView implements iLayoutView
 {
-    public function __construct() {
+	private $username;
+
+    public function __construct($username) {
+		$this->username = $username;
+    }
+
+    public function getUserID(){
 
     }
 

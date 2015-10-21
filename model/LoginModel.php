@@ -96,6 +96,11 @@ class LoginModel {
 		return $this->tempCredentials;
 	}
 
+	public function getLoggedInUsername() {
+		if(isset($_SESSION[$this->sessionUserLocation]))
+			return $_SESSION[$this->sessionUserLocation]->getUsername();
+	}
+
 	/**
 	 * renew the temporary credentials
 	 * 

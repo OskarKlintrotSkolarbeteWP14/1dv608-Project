@@ -22,10 +22,12 @@ class User
 {
     private $username;
     private $password;
+    private $id;
 
-    public function __construct($username, $password) {
+    public function __construct($username, $password, $id = null) {
         $this->username = $username;
         $this->password = $password;
+        $this->id = $id;
     }
 
     public function runTests(){
@@ -61,5 +63,9 @@ class User
 
     public function getPassword() {
         return $this->password;
+    }
+
+    public function getUserID() {
+        return $this->id;
     }
 }

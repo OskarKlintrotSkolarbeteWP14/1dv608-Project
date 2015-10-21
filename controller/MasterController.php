@@ -25,6 +25,7 @@ require_once("model/RegistrationDAL.php");
 require_once("model/DatabaseConnection.php");
 
 //Todo
+require_once("model/TodoDAL.php");
 require_once("controller/TodoController.php");
 require_once("view/TodoView.php");
 
@@ -43,8 +44,9 @@ class MasterController
     private $m_DatabaseConnection;
     private $loggedIn = false;
     private $registerNewUser = false;
+    private $v_Todo;
     private $c_Todo;
-
+    private $m_TodoDAL;
     private $optionalView;
 
     public function run() {
@@ -59,8 +61,9 @@ class MasterController
         $this->v_Registration = new view\RegistrationView($this->m_RegistrationDAL);
         $this->c_Registration = new controller\RegistrationController($this->v_Registration, $this->m_RegistrationDAL);
 
-        $this->v_Todo = new view\TodoView();
-        $this->c_Todo = new controller\TodoController($this->v_Todo);
+        $this->m_TodoDAL = new model\TodoDAL($this->m_DatabaseConnection, $this->m_Login->getLoggedInUsername());
+        $this->v_Todo = new view\TodoView($this->m_Login->getLoggedInUsername());
+        $this->c_Todo = new controller\TodoController($this->v_Todo, $this->m_TodoDAL);
 
         //Controller must be run first since state is changed
         if($this->c_Registration->userWantToRegister()) {
