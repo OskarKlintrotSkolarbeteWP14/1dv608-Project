@@ -22,7 +22,7 @@ class TodoView implements iLayoutView
 				<legend>Todo-list</legend>
 					<p>Todo: </p>
 					<label for='todo'>Todo :</label>
-					<input type='text' id='todo' value='Write todo here...'>
+					<input type='text' id='todo' placeholder='Write todo here...'>
 					<br>
 				</fieldset>
 			</form>";

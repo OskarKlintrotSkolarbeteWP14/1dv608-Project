@@ -10,11 +10,13 @@ namespace controller;
 
 require_once("view/TodoView.php");
 
+use view;
+
 class TodoController
 {
     private $view;
 
-    public function __construct(\view\TodoView $todoView){
+    public function __construct(view\TodoView $todoView){
         $this->view = $todoView;
     }
 

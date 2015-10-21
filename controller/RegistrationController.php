@@ -13,12 +13,10 @@ require_once("view/RegistrationView.php");
 
 class RegistrationController
 {
-    private $model;
     private $view;
     private $dal;
 
-    public function __construct(\view\RegistrationView $view, \model\RegistrationModel $model, \model\RegistrationDAL $registrationDAL) {
-        $this->model = $model;
+    public function __construct(\view\RegistrationView $view, \model\RegistrationDAL $registrationDAL) {
         $this->view =  $view;
         $this->dal = $registrationDAL;
     }

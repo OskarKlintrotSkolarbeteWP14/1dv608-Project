@@ -16,12 +16,10 @@ use exception\UserAlreadyExistException;
 use model\User;
 
 require_once("iLayoutView.php");
-require_once("model/RegistrationModel.php");
 require_once("model/User.php");
 
 class RegistrationView implements iLayoutView
 {
-    private $model;
 	private $dal;
     private $register = "register";
 
@@ -39,8 +37,7 @@ class RegistrationView implements iLayoutView
 
 	private $message = [];
 
-    public function __construct(\model\RegistrationModel $model, \model\RegistrationDAL $dal) {
-        $this->model = $model;
+    public function __construct(\model\RegistrationDAL $dal) {
 		$this->dal = $dal;
     }
 

@@ -37,7 +37,6 @@ class MasterController
     private $m_Login;
     private $v_Login;
     private $c_Login;
-    private $m_Registration;
     private $m_RegistrationDAL;
     private $v_Registration;
     private $c_Registration;
@@ -56,10 +55,9 @@ class MasterController
         $this->v_Login = new view\LoginView($this->m_Login);
         $this->c_Login = new controller\LoginController($this->m_Login, $this->v_Login);
 
-        $this->m_Registration = new model\RegistrationModel();
         $this->m_RegistrationDAL = new model\RegistrationDAL($this->m_DatabaseConnection);
-        $this->v_Registration = new view\RegistrationView($this->m_Registration, $this->m_RegistrationDAL);
-        $this->c_Registration = new controller\RegistrationController($this->v_Registration, $this->m_Registration, $this->m_RegistrationDAL);
+        $this->v_Registration = new view\RegistrationView($this->m_RegistrationDAL);
+        $this->c_Registration = new controller\RegistrationController($this->v_Registration, $this->m_RegistrationDAL);
 
         $this->v_Todo = new view\TodoView();
         $this->c_Todo = new controller\TodoController($this->v_Todo);
