@@ -1,0 +1,8 @@
+DB_HOST=45.55.147.164
+DB_DATABASE=stoneage
+DB_USERNAME=oskar
+DB_PASSWORD=stoneage2015
+
+// I'm fully aware that this file should not be hosted public on GitHub,
+// however I use Azure continuous deployment from git and that's why the
+// file is here. On a real project I would never do it like this.
