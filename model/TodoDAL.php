@@ -14,10 +14,9 @@ require_once("BaseDAL.php");
 class TodoDAL extends BaseDAL
 {
     private $username;
-    public $database;
 
     public function __construct($database, $username){
-        $this->database = $database;
+        parent::__construct($database);
         $this->username = $username;
     }
 
@@ -27,6 +26,17 @@ class TodoDAL extends BaseDAL
         $this->database->prepare('SELECT * FROM todos WHERE UserID = :userID');
         $this->database->bindValue(':userID', $userID);
         return $this->database->fetchAll();
+    }
+
+    public function saveTodo($todo) {
+        $userID = $this->getUserCredentials($this->username)->getUserID();
+
+        $this->database->prepare('INSERT INTO todos (UserID, Todo) VALUES (:userID, :todo)');
+        $this->database->bindValue(':userID', $userID);
+        $this->database->bindValue(':todo', $todo);
+        $this->database->execute();
+
+        return true;
     }
 
 //    public function doUserExist(User $user)

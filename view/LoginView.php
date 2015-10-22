@@ -6,8 +6,9 @@
 namespace view;
 
 require_once("iLayoutView.php");
+require_once("PRG.php");
 
-class LoginView implements iLayoutView {
+class LoginView extends PRG implements iLayoutView {
 	/**
 	 * These names are used in $_POST
 	 * @var string
@@ -150,7 +151,8 @@ class LoginView implements iLayoutView {
 					$message .= " and you will be remembered";
 				}
 			}
-			$this->redirect($message);
+			$this->saveSessionLocation($message);
+			$this->redirect();
 		} else {
 			$message = $this->getSessionMessage();
 			
@@ -176,7 +178,8 @@ class LoginView implements iLayoutView {
 		//Correct messages
 		if ($this->userWantsToLogout() && $this->userDidLogout) {
 			$message = "Bye bye!";
-			$this->redirect($message);
+			$this->saveSessionLocation($message);
+			$this->redirect();
 		} else if ($this->userWantsToLogin() && $this->getTempPassword() != "") {
 			$message =  "Wrong information in cookies";
 		} else if ($this->userWantsToLogin() && $this->getRequestUserName() == "") {
@@ -200,10 +203,8 @@ class LoginView implements iLayoutView {
 		return $this->generateLoginFormHTML($message);
 	}
 
-	private function redirect($message) {
+	private function saveSessionLocation($message){
 		$_SESSION[self::$sessionSaveLocation] = $message;
-		$actual_link = 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['PHP_SELF'];
-		header("Location: $actual_link");
 	}
 
 	private function getSessionMessage() {
