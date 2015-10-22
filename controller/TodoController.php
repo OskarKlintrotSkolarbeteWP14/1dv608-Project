@@ -25,9 +25,11 @@ class TodoController
     }
 
     public function doTodo(){
-        foreach ($this->todoDAL->getTodos() as $todo) {
-            var_dump($todo["Todo"]);
-        }
+//        foreach ($this->todoDAL->getTodos() as $todo) {
+//            var_dump($todo["Todo"]);
+//        }
+
+        $this->view->setTodosFromDb($this->todoDAL->getTodos());
 
         if($this->view->userWantsToAddTodo()){
             $this->todoDAL->saveTodo($this->view->getTodoToBeSaved());

@@ -9,6 +9,7 @@
 namespace model;
 
 require_once("User.php");
+require_once("Todo.php");
 require_once("BaseDAL.php");
 
 class TodoDAL extends BaseDAL
@@ -25,7 +26,15 @@ class TodoDAL extends BaseDAL
 
         $this->database->prepare('SELECT * FROM todos WHERE UserID = :userID');
         $this->database->bindValue(':userID', $userID);
-        return $this->database->fetchAll();
+        $resultFromDatabase = $this->database->fetchAll();
+
+        if(!empty($resultFromDatabase)) {
+            foreach ($resultFromDatabase as $todo) {
+                $todos[] = new Todo($todo["TodoID"], $todo["Todo"], $todo["Timestamp"]);
+            }
+            return $todos;
+        } else
+            return "";
     }
 
     public function saveTodo($todo) {
