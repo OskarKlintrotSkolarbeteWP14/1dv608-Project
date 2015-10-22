@@ -8,6 +8,12 @@
 
 namespace model;
 
+use exception\EmptyTodoException;
+use exception\EmptyTodoIDException;
+
+require_once("exception/EmptyTodoException.php");
+require_once("exception/EmptyTodoIDException.php");
+require_once("exception/EmptyTimestampException.php");
 
 class Todo
 {
@@ -16,6 +22,12 @@ class Todo
     private $Timestamp;
 
     public function __construct($todoID, $todo, $timestamp){
+        if(empty($todo))
+            throw new EmptyTodoException();
+        if(empty($todoID))
+            throw new EmptyTodoIDException();
+        if(empty($timestamp))
+            throw new EmptyTimestampException();
         $this->TodoID = $todoID;
         $this->Todo = $todo;
         $this->Timestamp = $timestamp;
@@ -34,6 +46,8 @@ class Todo
     }
 
     public function setTodo($todo){
+        if(empty($todo))
+            throw new EmptyTodoException();
         $this->Todo = $todo;
     }
 }

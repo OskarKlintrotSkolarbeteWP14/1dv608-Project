@@ -25,14 +25,14 @@ class TodoController
     }
 
     public function doTodo(){
-//        foreach ($this->todoDAL->getTodos() as $todo) {
-//            var_dump($todo["Todo"]);
-//        }
-
         $this->view->setTodosFromDb($this->todoDAL->getTodos());
 
         if($this->view->userWantsToAddTodo()){
-            $this->todoDAL->saveTodo($this->view->getTodoToBeSaved());
+            try {
+                $this->todoDAL->saveTodo($this->view->getTodoToBeSaved());
+            }catch (\Exception $e) {
+                $this->view->setErrorMessageForEmptyTodo();
+            }
             $this->view->redirect();
         }
     }

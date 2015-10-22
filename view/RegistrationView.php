@@ -140,7 +140,7 @@ class RegistrationView implements iLayoutView
 	public function registrationSuccessful() {
 		$_SESSION[self::$storeUsernameDuringSession] = $this->getUsername();
 		$_SESSION[self::$sessionSaveMessage] = self::$successfulRegistration;
-		$actual_link = 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['PHP_SELF'];
+		$actual_link = 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['PHP_SELF']; //TODO: Try use redirect() instead
 		header("Location: $actual_link");
 	}
 

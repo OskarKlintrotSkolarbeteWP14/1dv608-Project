@@ -8,14 +8,18 @@
 
 namespace view;
 
+use exception\EmptyTodoException;
+
 require_once("iLayoutView.php");
 require_once("PRG.php");
 require_once("model/Todo.php");
+require_once("exception/EmptyTodoException.php");
 
 class TodoView extends PRG implements iLayoutView
 {
 	private static $addTodo = "TodoView::Add";
 	private static $newTodo = "TodoView::New";
+	private static $sessionErrorMessage = "TodoView::Error";
 
 	private $username;
 	private $todosFromDb;
@@ -29,10 +33,10 @@ class TodoView extends PRG implements iLayoutView
 	}
 
 	public function getTodoToBeSaved() {
-		if (isset($_POST[self::$newTodo]))
+		if (isset($_POST[self::$newTodo]) && !empty($_POST[self::$newTodo]))
 			return trim($_POST[self::$newTodo]);
-
-		return "";
+		else
+			throw new EmptyTodoException();
 	}
 
 	public function setTodosFromDb($todos){
@@ -47,7 +51,7 @@ class TodoView extends PRG implements iLayoutView
 		return "<form method='post'>
 				<fieldset>
 				<legend>Todo-list</legend>
-					<p>Todo: </p>
+					". $this->getErrorMessage()  ."
 					<label for='todo'>Enter new todo :</label>
 					<input type='text' id='".self::$newTodo."' name='".self::$newTodo."' placeholder='Write todo here...'>
 					<input type='submit' name='".self::$addTodo."' value='Add todo' />
@@ -57,6 +61,19 @@ class TodoView extends PRG implements iLayoutView
 					"
 				</fieldset>
 			</form>";
+	}
+
+	public function setErrorMessageForEmptyTodo(){
+		$_SESSION[self::$sessionErrorMessage] = "Todo can't be empty!";
+	}
+
+	private function getErrorMessage(){
+		if(isset($_SESSION[self::$sessionErrorMessage]) && !$_POST){
+			$errorMessage = "<p>". $_SESSION[self::$sessionErrorMessage] ."</p>";
+			unset($_SESSION[self::$sessionErrorMessage]);
+			return $errorMessage;
+		}
+		return "";
 	}
 
 	private function getTodos(){
