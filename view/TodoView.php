@@ -89,7 +89,7 @@ class TodoView extends PRG implements iLayoutView
 			$todosToRender .= "</table>";
 		}
 		else {
-			$todosToRender = "<p>No todos, go back to sleep!</p>";
+			$todosToRender = "<p>Nothing more todo, go back to sleep or go for a run!</p>";
 		}
 		return $todosToRender;
 	}
