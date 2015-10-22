@@ -31,6 +31,7 @@ class Todo
         $this->TodoID = $todoID;
         $this->Todo = $todo;
         $this->Timestamp = new \DateTime($timestamp);
+        $this->Timestamp = $this->Timestamp->add(new \DateInterval('PT4H')); // Since I can't change my db (I have on a friends server) to use UTC I simulate it here
     }
 
     public function getTodoID(){

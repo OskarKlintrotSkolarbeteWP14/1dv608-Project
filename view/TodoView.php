@@ -80,9 +80,10 @@ class TodoView extends PRG implements iLayoutView
 		$todosToRender = "<table>";
 		if($this->todosFromDb) {
 			foreach ($this->todosFromDb as $key => $todo) {
+				$timestamp = $todo->getTimestamp()->setTimezone(new \DateTimeZone("Europe/Stockholm"));
 				$todosToRender .= "<tr value ='" . $todo->getTodoID() . "'>" . "<td>" . ++$key . "</td>"
 					. "<td>" . $todo->getTodo() . "</td>"
-					. "<td>" . date_format($todo->getTimestamp(), 'Y-m-d') . "</td>"
+					. "<td>" . date_format($timestamp, 'Y-m-d H:i') . "</td>"
 					. "</tr>";
 			}
 			$todosToRender .= "</table>";
