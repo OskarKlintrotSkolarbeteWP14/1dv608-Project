@@ -30,7 +30,7 @@ class Todo
             throw new EmptyTimestampException();
         $this->TodoID = $todoID;
         $this->Todo = $todo;
-        $this->Timestamp = $timestamp;
+        $this->Timestamp = new \DateTime($timestamp);
     }
 
     public function getTodoID(){

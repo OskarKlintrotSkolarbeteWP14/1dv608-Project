@@ -44,20 +44,20 @@ class TodoView extends PRG implements iLayoutView
 	}
 
     public function response() {
-        return $this->doTodoForm();
+        return $this->doTodoFormHTML();
     }
 
-	private function doTodoForm(){
+	private function doTodoFormHTML(){
 		return "<form method='post'>
 				<fieldset>
 				<legend>Todo-list</legend>
-					". $this->getErrorMessage()  ."
+					". $this->getErrorMessageHTML()  ."
 					<label for='todo'>Enter new todo :</label>
 					<input type='text' id='".self::$newTodo."' name='".self::$newTodo."' placeholder='Write todo here...'>
 					<input type='submit' name='".self::$addTodo."' value='Add todo' />
 					<br>
 					"
-					.$this->getTodos().
+					.$this->getTodosHTML().
 					"
 				</fieldset>
 			</form>";
@@ -67,7 +67,7 @@ class TodoView extends PRG implements iLayoutView
 		$_SESSION[self::$sessionErrorMessage] = "Todo can't be empty!";
 	}
 
-	private function getErrorMessage(){
+	private function getErrorMessageHTML(){
 		if(isset($_SESSION[self::$sessionErrorMessage]) && !$_POST){
 			$errorMessage = "<p>". $_SESSION[self::$sessionErrorMessage] ."</p>";
 			unset($_SESSION[self::$sessionErrorMessage]);
@@ -76,13 +76,13 @@ class TodoView extends PRG implements iLayoutView
 		return "";
 	}
 
-	private function getTodos(){
+	private function getTodosHTML(){
 		$todosToRender = "<table>";
 		if($this->todosFromDb) {
 			foreach ($this->todosFromDb as $key => $todo) {
 				$todosToRender .= "<tr value ='" . $todo->getTodoID() . "'>" . "<td>" . ++$key . "</td>"
 					. "<td>" . $todo->getTodo() . "</td>"
-					. "<td>" . $todo->getTimestamp() . "</td>"
+					. "<td>" . date_format($todo->getTimestamp(), 'Y-m-d') . "</td>"
 					. "</tr>";
 			}
 			$todosToRender .= "</table>";
