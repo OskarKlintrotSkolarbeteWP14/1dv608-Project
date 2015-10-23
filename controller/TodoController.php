@@ -25,11 +25,11 @@ class TodoController
     }
 
     public function doTodo(){
-        $this->view->setTodosFromDb($this->todoDAL->getTodos());
+        $this->view->setTodosFromDb($this->todoDAL->readTodos());
 
-        if($this->view->userWantsToAddTodo()){
+        if($this->view->userWantsToCreateTodo()){
             try {
-                $this->todoDAL->saveTodo($this->view->getTodoToBeSaved());
+                $this->todoDAL->createTodo($this->view->getTodoToBeCreated());
             }catch (\Exception\EmptyTodoException $e) {
                 $this->view->setErrorMessageForEmptyTodo();
             }catch (\Exception\ToLongTodoException $e) {
@@ -37,8 +37,28 @@ class TodoController
             }catch (\Exception $e) {
                 $this->view->setGeneralErrorMessage();
             }
-
-            $this->view->redirect();
         }
+
+        if($this->view->userWantsToUpdateTodo()){
+            try {
+                $this->todoDAL->updateTodo($this->view->getTodoIDToBeUpdated(), $this->view->getTodoMessageToBeUpdated());
+            }catch (\Exception\EmptyTodoException $e) {
+                $this->view->setErrorMessageForEmptyTodo();
+            }catch (\Exception\ToLongTodoException $e) {
+                $this->view->setErrorMessageForToLongTodo();
+            }catch (\Exception $e) {
+                $this->view->setGeneralErrorMessage();
+            }
+        }
+
+        if($this->view->userWantsToDeleteTodo()){
+            $this->todoDAL->deleteTodo($this->view->getTodoIDToBeDeleted());
+        }
+
+        if($this->view->userWantsToToogleTodo()){
+            $this->todoDAL->toggleDoneTodo($this->view->getTodoIDToBeToggled());
+        }
+
+        $this->view->setViewStraight();
     }
 }

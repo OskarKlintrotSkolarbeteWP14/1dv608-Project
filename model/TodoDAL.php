@@ -21,7 +21,7 @@ class TodoDAL extends BaseDAL
         $this->username = $username;
     }
 
-    public function getTodos() {
+    public function readTodos() {
         $userID = $this->getUserCredentials($this->username)->getUserID();
 
         $this->database->prepare('SELECT * FROM todos WHERE UserID = :userID');
@@ -30,19 +30,73 @@ class TodoDAL extends BaseDAL
 
         if(!empty($resultFromDatabase)) {
             foreach ($resultFromDatabase as $todo) {
-                $todos[] = new Todo($todo["TodoID"], $todo["Todo"], $todo["Timestamp"]);
+                $todos[] = new Todo($todo["TodoID"], $todo["Done"], $todo["Todo"], $todo["Timestamp"]);
             }
             return $todos;
         } else
             return "";
     }
 
-    public function saveTodo($todo) {
+    public function readTodo($todoID) {
+        $userID = $this->getUserCredentials($this->username)->getUserID();
+
+        $this->database->prepare('SELECT * FROM todos WHERE UserID = :userID AND TodoID = :todoID');
+        $this->database->bindValue(':userID', $userID);
+        $this->database->bindValue(':todoID', $todoID);
+        $resultFromDatabase = $this->database->fetch();
+
+        if(!empty($resultFromDatabase)) {
+            return new Todo($resultFromDatabase["TodoID"], $resultFromDatabase["Done"],
+                $resultFromDatabase["Todo"], $resultFromDatabase["Timestamp"]);
+        } else
+            return "";
+    }
+
+    public function createTodo($todo) {
         $userID = $this->getUserCredentials($this->username)->getUserID();
 
         $this->database->prepare('INSERT INTO todos (UserID, Todo) VALUES (:userID, :todo)');
         $this->database->bindValue(':userID', $userID);
         $this->database->bindValue(':todo', $todo);
+        $this->database->execute();
+
+        return true;
+    }
+
+    public function deleteTodo($todoID) {
+        $userID = $this->getUserCredentials($this->username)->getUserID();
+
+        $this->database->prepare('DELETE FROM todos WHERE UserID = :userID AND TodoID = :todoID');
+        $this->database->bindValue(':userID', $userID);
+        $this->database->bindValue(':todoID', $todoID);
+        $this->database->execute();
+
+        return true;
+    }
+
+    public function toggleDoneTodo($todoID) {
+        $userID = $this->getUserCredentials($this->username)->getUserID();
+        $todo = $this->readTodo($todoID);
+        $currentStatus = $todo->getDone();
+
+        $this->database->prepare('UPDATE todos SET Done = :done WHERE UserID = :userID AND TodoID = :todoID');
+        $this->database->bindValue(':userID', $userID);
+        $this->database->bindValue(':todoID', $todoID);
+        $this->database->bindValue(':done', !$currentStatus);
+        $this->database->execute();
+
+        return true;
+    }
+
+    public function updateTodo($todoID, $message) {
+        $userID = $this->getUserCredentials($this->username)->getUserID();
+//        $todo = $this->readTodo($todoID);
+//        $todoID = $todo->getTodoID();
+
+        $this->database->prepare('UPDATE todos SET Todo = :todo WHERE UserID = :userID AND TodoID = :todoID');
+        $this->database->bindValue(':userID', $userID);
+        $this->database->bindValue(':todoID', $todoID);
+        $this->database->bindValue(':todo', $message);
         $this->database->execute();
 
         return true;

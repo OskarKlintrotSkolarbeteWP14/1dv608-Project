@@ -13,6 +13,7 @@ class LayoutView {
   <head>
     <meta charset="utf-8">
     <title>Todo-app Example</title>
+    <link rel="stylesheet" href="/style/custom.css">
   </head>
   <body>
     <h1>Project in PHP</h1>
