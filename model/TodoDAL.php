@@ -90,8 +90,6 @@ class TodoDAL extends BaseDAL
 
     public function updateTodo($todoID, $message) {
         $userID = $this->getUserCredentials($this->username)->getUserID();
-//        $todo = $this->readTodo($todoID);
-//        $todoID = $todo->getTodoID();
 
         $this->database->prepare('UPDATE todos SET Todo = :todo WHERE UserID = :userID AND TodoID = :todoID');
         $this->database->bindValue(':userID', $userID);
