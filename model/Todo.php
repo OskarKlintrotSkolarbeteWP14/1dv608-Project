@@ -10,10 +10,12 @@ namespace model;
 
 use exception\EmptyTodoException;
 use exception\EmptyTodoIDException;
+use exception\ToLongTodoException;
 
 require_once("exception/EmptyTodoException.php");
 require_once("exception/EmptyTodoIDException.php");
 require_once("exception/EmptyTimestampException.php");
+require_once("exception/ToLongTodoException.php");
 
 class Todo
 {
@@ -24,6 +26,8 @@ class Todo
     public function __construct($todoID, $todo, $timestamp){
         if(empty($todo))
             throw new EmptyTodoException();
+        if(strlen($todo) > 55)
+            throw new ToLongTodoException();
         if(empty($todoID))
             throw new EmptyTodoIDException();
         if(empty($timestamp))

@@ -30,9 +30,14 @@ class TodoController
         if($this->view->userWantsToAddTodo()){
             try {
                 $this->todoDAL->saveTodo($this->view->getTodoToBeSaved());
-            }catch (\Exception $e) {
+            }catch (\Exception\EmptyTodoException $e) {
                 $this->view->setErrorMessageForEmptyTodo();
+            }catch (\Exception\ToLongTodoException $e) {
+                $this->view->setErrorMessageForToLongTodo();
+            }catch (\Exception $e) {
+                $this->view->setGeneralErrorMessage();
             }
+
             $this->view->redirect();
         }
     }

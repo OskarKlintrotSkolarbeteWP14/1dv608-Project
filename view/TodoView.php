@@ -9,11 +9,13 @@
 namespace view;
 
 use exception\EmptyTodoException;
+use exception\ToLongTodoException;
 
 require_once("iLayoutView.php");
 require_once("PRG.php");
 require_once("model/Todo.php");
 require_once("exception/EmptyTodoException.php");
+require_once("exception/ToLongTodoException.php");
 
 class TodoView extends PRG implements iLayoutView
 {
@@ -33,10 +35,12 @@ class TodoView extends PRG implements iLayoutView
 	}
 
 	public function getTodoToBeSaved() {
-		if (isset($_POST[self::$newTodo]) && !empty($_POST[self::$newTodo]))
-			return trim($_POST[self::$newTodo]);
-		else
+		if (!isset($_POST[self::$newTodo]) || empty($_POST[self::$newTodo]))
 			throw new EmptyTodoException();
+		else if (strlen($_POST[self::$newTodo]) > 55)
+			throw new ToLongTodoException();
+		else
+			return trim($_POST[self::$newTodo]);
 	}
 
 	public function setTodosFromDb($todos){
@@ -65,6 +69,14 @@ class TodoView extends PRG implements iLayoutView
 
 	public function setErrorMessageForEmptyTodo(){
 		$_SESSION[self::$sessionErrorMessage] = "Todo can't be empty!";
+	}
+
+	public function setErrorMessageForToLongTodo(){
+		$_SESSION[self::$sessionErrorMessage] = "Todo can't be more than 55 characters!";
+	}
+
+	public function setGeneralErrorMessage(){
+		$_SESSION[self::$sessionErrorMessage] = "Something went wrong, try again later!";
 	}
 
 	private function getErrorMessageHTML(){

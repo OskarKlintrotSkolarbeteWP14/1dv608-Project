@@ -48,14 +48,4 @@ class TodoDAL extends BaseDAL
         return true;
     }
 
-//    public function doUserExist(User $user)
-//    {
-//        $this->database->prepare('SELECT * FROM users WHERE username = :username');
-//        $this->database->bindValue(':username', $user->getUsername());
-//        $this->database->fetchAll();
-//
-//        if ($this->database->rowCount() > 0) {
-//            throw new exception\UserAlreadyExistException;
-//        }
-//    }
 }
