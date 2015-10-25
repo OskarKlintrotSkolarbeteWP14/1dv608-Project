@@ -164,7 +164,7 @@ class TodoView extends PRG implements iLayoutView
 		if($this->todosFromDb) {
 			foreach ($this->todosFromDb as $key => $todo) {
 				$timestamp = $todo->getTimestamp()->setTimezone(new \DateTimeZone("Europe/Stockholm"));
-				if($_SESSION[self::$sessionEditTodo]  != null && $key == $_SESSION[self::$sessionEditTodo] ) {
+				if(isset($_SESSION[self::$sessionEditTodo]) && $key == $_SESSION[self::$sessionEditTodo] ) {
 					$todosToRender .= "<tr>" . "<td>" . intval($key + 1) . "</td>"
 						. "<td colspan='2'> <input type='text' name='".self::$updatedTodo."' value='". $todo->getTodo() ."' placeholder='Write todo here...'></td>"
 						. "<td>" . "<button name='" . self::$saveUpdatedTodo . "' value='" . $key . "'>Save</button>" . "</td>"
