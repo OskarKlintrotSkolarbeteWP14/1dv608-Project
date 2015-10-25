@@ -25,10 +25,14 @@ class TodoView extends PRG implements iLayoutView
 	private static $updatedTodo = "TodoView::UpdatedTodo";
 	private static $saveUpdatedTodo = "TodoView::Save";
 	private static $cancelUpdatedTodo = "TodoView::Cancel";
+	private static $confirmRemoveTodo = "TodoView::ConfirmationRemove";
+	private static $cancelRemoveTodo = "TodoView::CancelRemove";
 	private static $doneTodo = "TodoView::Done";
 	private static $removeTodo = "TodoView::Remove";
 	private static $sessionErrorMessage = "TodoView::Error";
 	private static $sessionEditTodo = "TodoView::EditTodo";
+	private static $sessionRemoveTodo = "TodoView::RemoveTodo";
+	private static $sessionAskUserToConfirmRemovingTodo = "TodoView::TodoToBeConfirmed";
 
 	private $username;
 	private $todosFromDb;
@@ -61,7 +65,18 @@ class TodoView extends PRG implements iLayoutView
 	}
 
 	public function userWantsToDeleteTodo(){
-		return isset($_POST[self::$removeTodo]);
+		if (isset($_POST[self::$cancelRemoveTodo])){
+			unset($_SESSION[self::$sessionAskUserToConfirmRemovingTodo]);
+		}
+		else if (isset($_POST[self::$removeTodo])){
+			$_SESSION[self::$sessionAskUserToConfirmRemovingTodo] = $_POST[self::$removeTodo];
+		}
+		else if (isset($_POST[self::$confirmRemoveTodo])) {
+			unset($_SESSION[self::$sessionAskUserToConfirmRemovingTodo]);
+			return true;
+		}
+		else
+			return false;
 	}
 
 	public function userWantsToToogleTodo(){
@@ -76,13 +91,14 @@ class TodoView extends PRG implements iLayoutView
 	}
 
 	public function getTodoIDToBeDeleted(){
-		if(isset($_POST[self::$removeTodo])){
-			return $this->todosFromDb[$_POST[self::$removeTodo]]->getTodoID();
+		if(isset($_POST[self::$confirmRemoveTodo])){
+			return $this->todosFromDb[$_POST[self::$confirmRemoveTodo]]->getTodoID();
 		}
 	}
 
 	public function getTodoIDToBeToggled(){
 		if(isset($_POST[self::$doneTodo])){
+			unset($_SESSION[self::$sessionAskUserToConfirmRemovingTodo]);
 			return $this->todosFromDb[$_POST[self::$doneTodo]]->getTodoID();
 		}
 	}
@@ -119,8 +135,19 @@ class TodoView extends PRG implements iLayoutView
 	}
 
     public function response() {
-        return $this->doTodoFormHTML();
+		if(isset($_SESSION[self::$sessionAskUserToConfirmRemovingTodo]))
+			return $this->doAskUserToConfirmRemovingTodoHTML();
+		else
+        	return $this->doTodoFormHTML();
     }
+
+	private function doAskUserToConfirmRemovingTodoHTML(){
+		return "<form method='post'>
+				<p>Do you really want to remove the todo?</p>
+			    <button name='" . self::$confirmRemoveTodo . "' value='" . $_SESSION[self::$sessionAskUserToConfirmRemovingTodo] . "'>Yes</button>
+			    <button name='" . self::$cancelRemoveTodo . "'>No</button>
+			    </form>";
+	}
 
 	private function doTodoFormHTML(){
 		return "<form method='post'>
