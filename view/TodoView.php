@@ -31,15 +31,31 @@ class TodoView extends PRG implements iLayoutView
 	private static $removeTodo = "TodoView::Remove";
 	private static $sessionErrorMessage = "TodoView::Error";
 	private static $sessionEditTodo = "TodoView::EditTodo";
-	private static $sessionRemoveTodo = "TodoView::RemoveTodo";
 	private static $sessionAskUserToConfirmRemovingTodo = "TodoView::TodoToBeConfirmed";
+	private static $sessionPaginationPage = "TodoView::Page";
+	private static $todosPerPage = 5;
+	private static $nextPage = "TodoView::Next";
+	private static $prevPage = "TodoView::Prev";
 
 	private $username;
 	private $todosFromDb;
 
     public function __construct($username) {
 		$this->username = $username;
+		$this->setupPagination();
     }
+
+	public function setupPagination(){
+		if (isset($_POST[self::$prevPage]))
+			$_SESSION[self::$sessionPaginationPage] = $_POST[self::$prevPage];
+		if (isset($_POST[self::$nextPage]))
+			$_SESSION[self::$sessionPaginationPage] = $_POST[self::$nextPage];
+
+		if(isset($_SESSION[self::$sessionPaginationPage]))
+			return;
+		else
+			$_SESSION[self::$sessionPaginationPage] = 0;
+	}
 
 	public function setViewStraight(){
 		if($_POST)
@@ -131,7 +147,9 @@ class TodoView extends PRG implements iLayoutView
 	}
 
 	public function setTodosFromDb($todos){
-		$this->todosFromDb = $todos;
+		foreach ($todos as $key => $item) {
+			$this->todosFromDb[] = [$key, $item];
+		}
 	}
 
     public function response() {
@@ -161,6 +179,9 @@ class TodoView extends PRG implements iLayoutView
 					"
 					.$this->getTodosHTML().
 					"
+					"
+					.$this->getPaginationHTML().
+					"
 				</fieldset>
 			</form>";
 	}
@@ -186,7 +207,7 @@ class TodoView extends PRG implements iLayoutView
 		return "";
 	}
 
-	private function getTodosHTML(){
+/*	private function getTodosHTML(){
 		$todosToRender = "<table>";
 		if($this->todosFromDb) {
 			foreach ($this->todosFromDb as $key => $todo) {
@@ -214,9 +235,76 @@ class TodoView extends PRG implements iLayoutView
 		}
 		return $todosToRender;
 	}
+*/
+
+	private function getTodosHTML(){
+		$paginatedTodos = $this->getTodosPaginated();
+		$todosToRender = "<table>";
+		if($paginatedTodos) {
+			foreach ($paginatedTodos as $key => $todo) {
+				$timestamp = $todo[1]->getTimestamp()->setTimezone(new \DateTimeZone("Europe/Stockholm"));
+				if(isset($_SESSION[self::$sessionEditTodo]) && $key == $_SESSION[self::$sessionEditTodo] ) {
+					$todosToRender .= "<tr>" . "<td>" . intval($todo[0] + 1) . "</td>"
+						. "<td colspan='2'> <input type='text' name='".self::$updatedTodo."' value='". $todo[1]->getTodo() ."' placeholder='Write todo here...'></td>"
+						. "<td>" . "<button name='" . self::$saveUpdatedTodo . "' value='" . $key . "'>Save</button>" . "</td>"
+						. "<td>" . "<button name='" . self::$cancelUpdatedTodo . "' value='" . $key . "'>Cancel</button>" . "</td>"
+						. "</tr>";
+				} else {
+					$todosToRender .= "<tr class='" . $this->getDoneClass($todo[1]->getDone()) . "'>" . "<td>" . intval($todo[0] + 1) . "</td>"
+						. "<td>" . $todo[1]->getTodo() . "</td>"
+						. "<td>" . date_format($timestamp, 'Y-m-d H:i') . "</td>"
+						. "<td>" . "<button name='" . self::$doneTodo . "' value='" . $key . "'>Done</button>" . "</td>"
+						. "<td>" . "<button name='" . self::$updateTodo . "' value='" . $key . "' />Edit</button>" . "</td>"
+						. "<td>" . "<button name='" . self::$removeTodo . "' value='" . $key . "' />Remove</button>" . "</td>"
+						. "</tr>";
+				}
+			}
+			$todosToRender .= "</table>";
+		}
+		else {
+			$todosToRender = "<p>Nothing more to do, go back to sleep or go for a run!</p>";
+		}
+		return $todosToRender;
+	}
+
+	private function getTodosPaginated(){
+		$paginatedTodos = "";
+		if(isset($_SESSION[self::$sessionPaginationPage])){
+			$page = $_SESSION[self::$sessionPaginationPage];
+			foreach ($this->todosFromDb as $key => $item) {
+				if ($key >= $page * self::$todosPerPage && $key < $page * self::$todosPerPage + self::$todosPerPage )
+					$paginatedTodos[] = $item;
+			}
+			if($paginatedTodos)
+				return $paginatedTodos;
+			else
+				return $this->todosFromDb;
+		} else {
+			return $this->todosFromDb;
+		}
+	}
 
 	private function getDoneClass($strikethrough){
 		if($strikethrough)
 			return "strikeout";
+	}
+
+	private function getPaginationHTML(){
+		if(intval($_SESSION[self::$sessionPaginationPage] - 1) < 0)
+			return "<button name='" . self::$prevPage . "' value='" . intval($_SESSION[self::$sessionPaginationPage] + 1) . "' >Older</button>"
+				 . "<button name='" . self::$nextPage . "' disabled >Newer</button>";
+		else if($this->onLastPage())
+			return "<button name='" . self::$prevPage . "' disabled>Older</button>"
+				 . "<button name='" . self::$nextPage . "' value='" . intval($_SESSION[self::$sessionPaginationPage] - 1) . "' >Newer</button>";
+		else
+			return "<button name='" . self::$prevPage . "' value='" . intval($_SESSION[self::$sessionPaginationPage] + 1) . "' >Older</button>"
+				 . "<button name='" . self::$nextPage . "' value='" . intval($_SESSION[self::$sessionPaginationPage] - 1) . "' >Newer</button>";
+	}
+
+	private function onLastPage() {
+		if(count($this->todosFromDb) / self::$todosPerPage <= $_SESSION[self::$sessionPaginationPage] + 1)
+			return true;
+		else
+			return false;
 	}
 }

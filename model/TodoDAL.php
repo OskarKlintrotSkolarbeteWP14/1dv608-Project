@@ -24,7 +24,7 @@ class TodoDAL extends BaseDAL
     }
 
     public function readTodos() {
-        $this->database->prepare('SELECT * FROM todos WHERE UserID = :userID');
+        $this->database->prepare('SELECT * FROM todos WHERE UserID = :userID ORDER BY Timestamp DESC');
         $this->database->bindValue(':userID', $this->userID);
         $resultFromDatabase = $this->database->fetchAll();
 
@@ -91,20 +91,20 @@ class TodoDAL extends BaseDAL
         return true;
     }
 
-    public function readTodoPagination($page){
-        $page = $page * 5;
-        $this->database->prepare('SELECT * FROM todos WHERE UserID = :userID LIMIT 5 OFFSET :page');
-        $this->database->bindValue(':userID', $this->userID);
-        $this->database->bindValue(':page', intval($page), \PDO::PARAM_INT);
-        $resultFromDatabase = $this->database->fetchAll();
-
-        if(!empty($resultFromDatabase)) {
-            foreach ($resultFromDatabase as $todo) {
-                $todos[] = new Todo($todo["TodoID"], $todo["Done"], $todo["Todo"], $todo["Timestamp"]);
-            }
-            return $todos;
-        } else
-            return "";
-    }
+//    public function readTodoPagination($page){
+//        $page = $page * 5;
+//        $this->database->prepare('SELECT * FROM todos WHERE UserID = :userID LIMIT 5 OFFSET :page');
+//        $this->database->bindValue(':userID', $this->userID);
+//        $this->database->bindValue(':page', intval($page), \PDO::PARAM_INT);
+//        $resultFromDatabase = $this->database->fetchAll();
+//
+//        if(!empty($resultFromDatabase)) {
+//            foreach ($resultFromDatabase as $todo) {
+//                $todos[] = new Todo($todo["TodoID"], $todo["Done"], $todo["Todo"], $todo["Timestamp"]);
+//            }
+//            return $todos;
+//        } else
+//            return "";
+//    }
 
 }

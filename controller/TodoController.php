@@ -25,7 +25,7 @@ class TodoController
     }
 
     public function doTodo(){
-        $this->view->setTodosFromDb($this->todoDAL->readTodoPagination(1));
+        $this->view->setTodosFromDb($this->todoDAL->readTodos());
 
         if($this->view->userWantsToCreateTodo()){
             try {
