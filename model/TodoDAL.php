@@ -15,17 +15,17 @@ require_once("BaseDAL.php");
 class TodoDAL extends BaseDAL
 {
     private $username;
+    private $userID;
 
     public function __construct($database, $username){
         parent::__construct($database);
         $this->username = $username;
+        $this->userID = $this->getUserCredentials($this->username)->getUserID();
     }
 
     public function readTodos() {
-        $userID = $this->getUserCredentials($this->username)->getUserID();
-
         $this->database->prepare('SELECT * FROM todos WHERE UserID = :userID');
-        $this->database->bindValue(':userID', $userID);
+        $this->database->bindValue(':userID', $this->userID);
         $resultFromDatabase = $this->database->fetchAll();
 
         if(!empty($resultFromDatabase)) {
@@ -38,10 +38,8 @@ class TodoDAL extends BaseDAL
     }
 
     public function readTodo($todoID) {
-        $userID = $this->getUserCredentials($this->username)->getUserID();
-
         $this->database->prepare('SELECT * FROM todos WHERE UserID = :userID AND TodoID = :todoID');
-        $this->database->bindValue(':userID', $userID);
+        $this->database->bindValue(':userID', $this->userID);
         $this->database->bindValue(':todoID', $todoID);
         $resultFromDatabase = $this->database->fetch();
 
@@ -53,10 +51,8 @@ class TodoDAL extends BaseDAL
     }
 
     public function createTodo($todo) {
-        $userID = $this->getUserCredentials($this->username)->getUserID();
-
         $this->database->prepare('INSERT INTO todos (UserID, Todo) VALUES (:userID, :todo)');
-        $this->database->bindValue(':userID', $userID);
+        $this->database->bindValue(':userID', $this->userID);
         $this->database->bindValue(':todo', $todo);
         $this->database->execute();
 
@@ -64,10 +60,8 @@ class TodoDAL extends BaseDAL
     }
 
     public function deleteTodo($todoID) {
-        $userID = $this->getUserCredentials($this->username)->getUserID();
-
         $this->database->prepare('DELETE FROM todos WHERE UserID = :userID AND TodoID = :todoID');
-        $this->database->bindValue(':userID', $userID);
+        $this->database->bindValue(':userID', $this->userID);
         $this->database->bindValue(':todoID', $todoID);
         $this->database->execute();
 
@@ -75,12 +69,11 @@ class TodoDAL extends BaseDAL
     }
 
     public function toggleDoneTodo($todoID) {
-        $userID = $this->getUserCredentials($this->username)->getUserID();
         $todo = $this->readTodo($todoID);
         $currentStatus = $todo->getDone();
 
         $this->database->prepare('UPDATE todos SET Done = :done WHERE UserID = :userID AND TodoID = :todoID');
-        $this->database->bindValue(':userID', $userID);
+        $this->database->bindValue(':userID', $this->userID);
         $this->database->bindValue(':todoID', $todoID);
         $this->database->bindValue(':done', !$currentStatus);
         $this->database->execute();
@@ -89,15 +82,29 @@ class TodoDAL extends BaseDAL
     }
 
     public function updateTodo($todoID, $message) {
-        $userID = $this->getUserCredentials($this->username)->getUserID();
-
         $this->database->prepare('UPDATE todos SET Todo = :todo WHERE UserID = :userID AND TodoID = :todoID');
-        $this->database->bindValue(':userID', $userID);
+        $this->database->bindValue(':userID', $this->userID);
         $this->database->bindValue(':todoID', $todoID);
         $this->database->bindValue(':todo', $message);
         $this->database->execute();
 
         return true;
+    }
+
+    public function readTodoPagination($page){
+        $page = $page * 5;
+        $this->database->prepare('SELECT * FROM todos WHERE UserID = :userID LIMIT 5 OFFSET :page');
+        $this->database->bindValue(':userID', $this->userID);
+        $this->database->bindValue(':page', intval($page), \PDO::PARAM_INT);
+        $resultFromDatabase = $this->database->fetchAll();
+
+        if(!empty($resultFromDatabase)) {
+            foreach ($resultFromDatabase as $todo) {
+                $todos[] = new Todo($todo["TodoID"], $todo["Done"], $todo["Todo"], $todo["Timestamp"]);
+            }
+            return $todos;
+        } else
+            return "";
     }
 
 }
