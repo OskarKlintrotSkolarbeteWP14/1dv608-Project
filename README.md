@@ -2,6 +2,4 @@
 
 Author: Login from Daniel Toll, Registration And TODO by Oskar Klintrot
 
-##Testing
- * Manual test cases at 
-  * [Wiki](https://github.com/OskarKlintrotSkolarbeteWP14/1dv608-Project/wiki/Test-Cases)
+For documentation, see the [wiki](https://github.com/OskarKlintrotSkolarbeteWP14/1dv608-Project/wiki/).
