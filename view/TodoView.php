@@ -52,17 +52,14 @@ class TodoView extends PRG implements iLayoutView
 		else if (isset($_POST[self::$nextPage]))
 			$_SESSION[self::$sessionPaginationPage] = $_POST[self::$nextPage];
 		else if ($_GET && strpos(@parse_url($_SERVER['REQUEST_URI'])['query'], self::$query) !== false) {
-			//var_dump(@parse_url($_SERVER['REQUEST_URI'])['query']);
 			$_SESSION[self::$sessionPaginationPage] = intval($_GET[self::$query]);
 		}
 
 		if(isset($_SESSION[self::$sessionPaginationPage])) {
-			$this->setPaginationStraight();
 			return;
 		}
 		else {
 			$_SESSION[self::$sessionPaginationPage] = 0;
-			$this->setPaginationStraight();
 		}
 	}
 
@@ -82,8 +79,10 @@ class TodoView extends PRG implements iLayoutView
 	}
 
 	public function setViewStraight(){
-		if($_POST)
+		if($_POST) {
 			$this->redirect();
+			$this->setPaginationStraight();
+		}
 	}
 
     public function userWantsToCreateTodo(){
@@ -126,20 +125,20 @@ class TodoView extends PRG implements iLayoutView
 	public function getTodoIDToBeUpdated(){
 		if(isset($_POST[self::$saveUpdatedTodo])){
 			$this->resetTodoToBeEdited();
-			return $this->todosFromDb[$_POST[self::$saveUpdatedTodo]]->getTodoID();
+			return $this->todosFromDb[$_POST[self::$saveUpdatedTodo]][1]->getTodoID();
 		}
 	}
 
 	public function getTodoIDToBeDeleted(){
 		if(isset($_POST[self::$confirmRemoveTodo])){
-			return $this->todosFromDb[$_POST[self::$confirmRemoveTodo]]->getTodoID();
+			return $this->todosFromDb[$_POST[self::$confirmRemoveTodo]][1]->getTodoID();
 		}
 	}
 
 	public function getTodoIDToBeToggled(){
 		if(isset($_POST[self::$doneTodo])){
-			unset($_SESSION[self::$sessionAskUserToConfirmRemovingTodo]);
-			return $this->todosFromDb[$_POST[self::$doneTodo]]->getTodoID();
+			//unset($_SESSION[self::$sessionAskUserToConfirmRemovingTodo]); //TODO What is this doing here?!
+			return $this->todosFromDb[$_POST[self::$doneTodo]][1]->getTodoID();
 		}
 	}
 
@@ -270,16 +269,16 @@ class TodoView extends PRG implements iLayoutView
 				if(isset($_SESSION[self::$sessionEditTodo]) && $key == $_SESSION[self::$sessionEditTodo] ) {
 					$todosToRender .= "<tr>" . "<td>" . intval($todo[0] + 1) . "</td>"
 						. "<td colspan='2'> <input type='text' name='".self::$updatedTodo."' value='". $todo[1]->getTodo() ."' placeholder='Write todo here...'></td>"
-						. "<td>" . "<button name='" . self::$saveUpdatedTodo . "' value='" . $key . "'>Save</button>" . "</td>"
-						. "<td>" . "<button name='" . self::$cancelUpdatedTodo . "' value='" . $key . "'>Cancel</button>" . "</td>"
+						. "<td>" . "<button name='" . self::$saveUpdatedTodo . "' value='" . $todo[0] . "'>Save</button>" . "</td>"
+						. "<td>" . "<button name='" . self::$cancelUpdatedTodo . "' value='" . $todo[0] . "'>Cancel</button>" . "</td>"
 						. "</tr>";
 				} else {
 					$todosToRender .= "<tr class='" . $this->getDoneClass($todo[1]->getDone()) . "'>" . "<td>" . intval($todo[0] + 1) . "</td>"
 						. "<td>" . $todo[1]->getTodo() . "</td>"
 						. "<td>" . date_format($timestamp, 'Y-m-d H:i') . "</td>"
-						. "<td>" . "<button name='" . self::$doneTodo . "' value='" . $key . "'>Done</button>" . "</td>"
-						. "<td>" . "<button name='" . self::$updateTodo . "' value='" . $key . "' />Edit</button>" . "</td>"
-						. "<td>" . "<button name='" . self::$removeTodo . "' value='" . $key . "' />Remove</button>" . "</td>"
+						. "<td>" . "<button name='" . self::$doneTodo . "' value='" . $todo[0] . "'>Done</button>" . "</td>"
+						. "<td>" . "<button name='" . self::$updateTodo . "' value='" . $todo[0] . "' />Edit</button>" . "</td>"
+						. "<td>" . "<button name='" . self::$removeTodo . "' value='" . $todo[0] . "' />Remove</button>" . "</td>"
 						. "</tr>";
 				}
 			}
