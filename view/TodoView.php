@@ -316,7 +316,10 @@ class TodoView implements iLayoutView
 	}
 
 	private function getPaginationHTML(){
-		if(intval($_SESSION[self::$sessionPaginationPage] - 1) < 0)
+		if(intval($_SESSION[self::$sessionPaginationPage] - 1) < 0 && $this->onLastPage())
+			return "<button name='" . self::$prevPage . "' disabled>Older</button>"
+			. "<button name='" . self::$nextPage . "' disabled >Newer</button>";
+		else if(intval($_SESSION[self::$sessionPaginationPage] - 1) < 0)
 			return "<button name='" . self::$prevPage . "' value='" . intval($_SESSION[self::$sessionPaginationPage] + 1) . "' >Older</button>"
 				 . "<button name='" . self::$nextPage . "' disabled >Newer</button>";
 		else if($this->onLastPage())
