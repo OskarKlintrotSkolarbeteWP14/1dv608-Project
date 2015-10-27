@@ -147,6 +147,8 @@ class TodoView extends PRG implements iLayoutView
 			throw new EmptyTodoException();
 		else if (strlen($_POST[self::$updatedTodo]) > 55)
 			throw new ToLongTodoException();
+		else if (filter_var($_POST[self::$newTodo], FILTER_SANITIZE_STRING) !== $_POST[self::$newTodo])
+			throw new \Exception();
 		else
 			return trim($_POST[self::$updatedTodo]);
 	}
@@ -165,6 +167,8 @@ class TodoView extends PRG implements iLayoutView
 			throw new EmptyTodoException();
 		else if (strlen($_POST[self::$newTodo]) > 55)
 			throw new ToLongTodoException();
+		else if (filter_var($_POST[self::$newTodo], FILTER_SANITIZE_STRING) !== $_POST[self::$newTodo])
+			throw new \Exception();
 		else
 			return trim($_POST[self::$newTodo]);
 	}
