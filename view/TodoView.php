@@ -17,7 +17,7 @@ require_once("model/Todo.php");
 require_once("exception/EmptyTodoException.php");
 require_once("exception/ToLongTodoException.php");
 
-class TodoView extends PRG implements iLayoutView
+class TodoView implements iLayoutView
 {
 	private static $createTodo = "TodoView::Add";
 	private static $newTodo = "TodoView::New";
@@ -63,25 +63,18 @@ class TodoView extends PRG implements iLayoutView
 		}
 	}
 
-	private function setPaginationStraight(){
+	public function setViewStraight(){
 		if($_POST) {
 			$parameters = $_GET;
 			unset($parameters[self::$query]);
 			if($_SESSION[self::$sessionPaginationPage] > 0) {
 				$params[self::$query] = $_SESSION[self::$sessionPaginationPage];
 				$queryString = http_build_query($params);
-				$actual_link = 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'] . '?' . $queryString; //TODO: Try use redirect() instead
+				$actual_link = 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'] . '?' . $queryString;
 			}
 			else
 				$actual_link = 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'];
 			header("Location: $actual_link");
-		}
-	}
-
-	public function setViewStraight(){
-		if($_POST) {
-			$this->redirect();
-			$this->setPaginationStraight();
 		}
 	}
 
