@@ -6,9 +6,8 @@
 namespace view;
 
 require_once("iLayoutView.php");
-require_once("PRG.php");
 
-class LoginView extends PRG implements iLayoutView {
+class LoginView implements iLayoutView {
 	/**
 	 * These names are used in $_POST
 	 * @var string
