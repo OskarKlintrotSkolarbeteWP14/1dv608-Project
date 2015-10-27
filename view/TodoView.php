@@ -162,15 +162,18 @@ class TodoView extends PRG implements iLayoutView
 		$_SESSION[self::$sessionEditTodo]  = null;
 	}
 
-	public function getTodoToBeCreated() {
+	public function getTodoToBeCreated()
+	{
 		if (!isset($_POST[self::$newTodo]) || empty($_POST[self::$newTodo]))
 			throw new EmptyTodoException();
 		else if (strlen($_POST[self::$newTodo]) > 55)
 			throw new ToLongTodoException();
 		else if (filter_var($_POST[self::$newTodo], FILTER_SANITIZE_STRING) !== $_POST[self::$newTodo])
 			throw new \Exception();
-		else
+		else {
+			$_SESSION[self::$sessionPaginationPage] = 0;
 			return trim($_POST[self::$newTodo]);
+		}
 	}
 
 	public function setTodosFromDb($todos){
