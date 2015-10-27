@@ -11,8 +11,12 @@ namespace view;
 
 class PRG
 {
-    public function redirect() {
-        $actual_link = 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['PHP_SELF'];
-        header("Location: $actual_link");
+    public function redirect()
+    {
+        if ($_POST) {
+            $actual_link = 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+            //header("Location: $actual_link");
+            var_dump($_SERVER['REQUEST_URI']);
+        }
     }
 }

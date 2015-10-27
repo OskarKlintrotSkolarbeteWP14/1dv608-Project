@@ -36,6 +36,7 @@ class TodoView extends PRG implements iLayoutView
 	private static $todosPerPage = 5;
 	private static $nextPage = "TodoView::Next";
 	private static $prevPage = "TodoView::Prev";
+	private static $query = "page";
 
 	private $username;
 	private $todosFromDb;
@@ -45,16 +46,39 @@ class TodoView extends PRG implements iLayoutView
 		$this->setupPagination();
     }
 
-	public function setupPagination(){
+	private function setupPagination(){
 		if (isset($_POST[self::$prevPage]))
 			$_SESSION[self::$sessionPaginationPage] = $_POST[self::$prevPage];
-		if (isset($_POST[self::$nextPage]))
+		else if (isset($_POST[self::$nextPage]))
 			$_SESSION[self::$sessionPaginationPage] = $_POST[self::$nextPage];
+		else if ($_GET && strpos(@parse_url($_SERVER['REQUEST_URI'])['query'], self::$query) !== false) {
+			//var_dump(@parse_url($_SERVER['REQUEST_URI'])['query']);
+			$_SESSION[self::$sessionPaginationPage] = intval($_GET[self::$query]);
+		}
 
-		if(isset($_SESSION[self::$sessionPaginationPage]))
+		if(isset($_SESSION[self::$sessionPaginationPage])) {
+			$this->setPaginationStraight();
 			return;
-		else
+		}
+		else {
 			$_SESSION[self::$sessionPaginationPage] = 0;
+			$this->setPaginationStraight();
+		}
+	}
+
+	private function setPaginationStraight(){
+		if($_POST) {
+			$parameters = $_GET;
+			unset($parameters[self::$query]);
+			if($_SESSION[self::$sessionPaginationPage] > 0) {
+				$params[self::$query] = $_SESSION[self::$sessionPaginationPage];
+				$queryString = http_build_query($params);
+				$actual_link = 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'] . '?' . $queryString; //TODO: Try use redirect() instead
+			}
+			else
+				$actual_link = 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'];
+			header("Location: $actual_link");
+		}
 	}
 
 	public function setViewStraight(){
