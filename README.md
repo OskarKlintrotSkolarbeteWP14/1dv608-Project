@@ -4,4 +4,4 @@ Author: Login from Daniel Toll, Registration And TODO by Oskar Klintrot
 
 ##Testing
  * Manual test cases at 
-  * [Wiki](test-cases)
+  * [Wiki](wiki/test-cases)
