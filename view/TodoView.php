@@ -169,8 +169,10 @@ class TodoView implements iLayoutView
 	}
 
 	public function setTodosFromDb($todos){
-		foreach ($todos as $key => $item) {
-			$this->todosFromDb[] = [$key, $item];
+		if($todos) {
+			foreach ($todos as $key => $item) {
+				$this->todosFromDb[] = [$key, $item];
+			}
 		}
 	}
 
