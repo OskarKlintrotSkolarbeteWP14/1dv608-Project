@@ -168,6 +168,12 @@ class LoginView implements iLayoutView {
 		return $this->getLogoutButtonHTML($message);
 	}
 
+	private function redirect()
+	{
+		$actual_link = 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+		header("Location: $actual_link");
+	}
+
 	/**
 	 * @sideeffect Sets cookies!
 	 * @return [String HTML
