@@ -293,9 +293,11 @@ class TodoView implements iLayoutView
 		$paginatedTodos = "";
 		if(isset($_SESSION[self::$sessionPaginationPage])){
 			$page = $_SESSION[self::$sessionPaginationPage];
-			foreach ($this->todosFromDb as $key => $item) {
-				if ($key >= $page * self::$todosPerPage && $key < $page * self::$todosPerPage + self::$todosPerPage )
-					$paginatedTodos[] = $item;
+			if($this->todosFromDb) {
+				foreach ($this->todosFromDb as $key => $item) {
+					if ($key >= $page * self::$todosPerPage && $key < $page * self::$todosPerPage + self::$todosPerPage)
+						$paginatedTodos[] = $item;
+				}
 			}
 			if($paginatedTodos)
 				return $paginatedTodos;
