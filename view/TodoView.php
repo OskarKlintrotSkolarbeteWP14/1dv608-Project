@@ -137,7 +137,6 @@ class TodoView extends PRG implements iLayoutView
 
 	public function getTodoIDToBeToggled(){
 		if(isset($_POST[self::$doneTodo])){
-			//unset($_SESSION[self::$sessionAskUserToConfirmRemovingTodo]); //TODO What is this doing here?!
 			return $this->todosFromDb[$_POST[self::$doneTodo]][1]->getTodoID();
 		}
 	}
@@ -145,11 +144,7 @@ class TodoView extends PRG implements iLayoutView
 	public function getTodoMessageToBeUpdated() {
 		if (!isset($_POST[self::$updatedTodo]) || empty($_POST[self::$updatedTodo]))
 			throw new EmptyTodoException();
-		else if (strlen($_POST[self::$updatedTodo]) > 55)
-			throw new ToLongTodoException();
-		else if (filter_var($_POST[self::$newTodo], FILTER_SANITIZE_STRING) !== $_POST[self::$newTodo])
-			throw new \Exception();
-		else
+		else if ($this->validateTodoMessage($_POST[self::$updatedTodo]))
 			return trim($_POST[self::$updatedTodo]);
 	}
 
@@ -166,14 +161,18 @@ class TodoView extends PRG implements iLayoutView
 	{
 		if (!isset($_POST[self::$newTodo]) || empty($_POST[self::$newTodo]))
 			throw new EmptyTodoException();
-		else if (strlen($_POST[self::$newTodo]) > 55)
-			throw new ToLongTodoException();
-		else if (filter_var($_POST[self::$newTodo], FILTER_SANITIZE_STRING) !== $_POST[self::$newTodo])
-			throw new \Exception();
-		else {
+		else if ($this->validateTodoMessage($_POST[self::$newTodo])){
 			$_SESSION[self::$sessionPaginationPage] = 0;
 			return trim($_POST[self::$newTodo]);
 		}
+	}
+
+	private function validateTodoMessage($message){
+		if (strlen($message) > 55)
+			throw new ToLongTodoException();
+		else if (filter_var($message, FILTER_SANITIZE_STRING) !== $message)
+			throw new \Exception();
+		return true;
 	}
 
 	public function setTodosFromDb($todos){
