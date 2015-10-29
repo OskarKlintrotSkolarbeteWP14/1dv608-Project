@@ -196,7 +196,7 @@ class TodoView implements iLayoutView
 				<legend>Todo-list</legend>
 					". $this->getErrorMessageHTML()  ."
 					<label for='todo'>Enter new todo :</label>
-					<input type='text' id='".self::$newTodo."' name='".self::$newTodo."' placeholder='Write todo here...'>
+					<input type='text' id='".self::$newTodo."' name='".self::$newTodo."' placeholder='Write todo here...' autofocus>
 					<input type='submit' name='".self::$createTodo."' value='Add todo' />
 					<br>
 					"
@@ -277,7 +277,7 @@ class TodoView implements iLayoutView
 						. "<td>" . $todo[1]->getTodo() . "</td>"
 						. "<td>" . date_format($timestamp, 'Y-m-d H:i') . "</td>"
 						. "<td>" . "<button name='" . self::$doneTodo . "' value='" . $todo[0] . "'>Done</button>" . "</td>"
-						. "<td>" . "<button name='" . self::$updateTodo . "' value='" . $todo[0] . "' />Edit</button>" . "</td>"
+						. "<td>" . "<button name='" . self::$updateTodo . "' value='" . $key . "' />Edit</button>" . "</td>"
 						. "<td>" . "<button name='" . self::$removeTodo . "' value='" . $todo[0] . "' />Remove</button>" . "</td>"
 						. "</tr>";
 				}
